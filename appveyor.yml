@@ -1,0 +1,30 @@
+configuration: Release
+
+version: 1.0.{build}
+
+build:
+    parallel: true
+    project: RevStackCore.Pattern.csproj
+    publish_nuget: true
+    verbosity: minimal
+
+before_build:
+  - nuget restore
+  
+assembly_info:
+    assembly_version: '{version}'
+    assembly_file_version: '{version}'
+    assembly_informational_version: '{version}'
+    file: AssemblyInfo.*
+    patch: true
+
+branches:
+    only:
+      - master
+
+deploy:
+  provider: NuGet
+  api_key:
+    secure: iQKJ68G0pbr2/BRs32RdF3JSSKMJAO3n+bIkVql5aOBmpgbsBPADiuy0meL+BWT3
+  skip_symbols: false
+  artifact: /.*\.nupkg/

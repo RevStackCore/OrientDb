@@ -1,0 +1,34 @@
+﻿{
+  "version": "1.0.0-*",
+  "title": "RevStackCore.OrientDb",
+  "authors": [ "MIS Interactive", "David Sheets", "Scott Francis" ],
+  "owners": [ "David Sheets", "Scott Francis" ], 
+  "licenseUrl": "https://github.com/RevStackCore/OrientDb/blob/master/LICENSE",
+  "projectUrl": "https://github.com/RevStackCore/OrientDb.git",
+  "description": "RevStackCore .net core OrientDb repository pattern.",
+  "copyright": "Copyright 2016 Managed Information Solutions, LLC",
+  "tags": [ "RevStackCore", ".net core", "OrientDb", "RevStack", "Repository Pattern" ],
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Newtonsoft.Json": "9.0.2-beta1",
+    "RevStackCore.Pattern": "1.0.1",
+    "System.Data.SqlClient": "4.3.0",
+    "System.Linq.Queryable": "4.0.1",
+    "System.Net.Requests": "4.0.11",
+    "System.Reflection": "4.3.0",
+    "System.Reflection.Extensions": "4.3.0",
+    "System.Reflection.TypeExtensions": "4.1.0"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  },
+
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
+  }
+}
