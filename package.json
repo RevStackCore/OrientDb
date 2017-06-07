@@ -1,6 +1,6 @@
 {
   "name": "RevStackCore.OrientDb",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "OrientDb implementation of the RevStackCore repository pattern",
   "main": "RevStackCore.OrientDb.sln",
   "scripts": {
