@@ -58,6 +58,7 @@ namespace RevStackCore.OrientDb.Query
             if (m.Method.DeclaringType == typeof(Queryable) ||
                 m.Method.DeclaringType == typeof(System.Linq.Enumerable) ||
                 m.Method.Name == "Contains" ||
+                m.Method.Name == "Equals" ||
                 m.Method.Name == "StartsWith")
             {
                 if (m.Method.Name == "Where")
@@ -139,6 +140,56 @@ namespace RevStackCore.OrientDb.Query
                         string param = ToCamelCase(memberExpression.Member.Name);
                         object value = GetValue(exp);
                         string v = " " + param + " LIKE \'" + value.ToString() + "%\'";
+                        sb.Append(v);
+                    }
+
+                    return m;
+                }
+                else if (m.Method.Name == "Equals")
+                {
+                    int resultInt;
+                    long resultLong;
+                    double resultDouble;
+                    float resultFloat;
+                    decimal resultdecimal;
+
+                    if (m.Arguments[0].NodeType == ExpressionType.MemberAccess)
+                    {
+                        MemberExpression exp = (MemberExpression)m.Arguments[0];
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = memberExpression.Member.Name;
+                        var value = GetValue(exp).ToString();
+                        string v = " " + param + " = '" + value + "'";
+                        if (int.TryParse(value, out resultInt) || long.TryParse(value, out resultLong) || double.TryParse(value, out resultDouble) || float.TryParse(value, out resultFloat) || decimal.TryParse(value, out resultdecimal))
+                        {
+                            v = " " + param + " = " + value.ToString();
+                        }
+                        sb.Append(v);
+                    }
+                    else if (m.Arguments[0].NodeType == ExpressionType.Convert)
+                    {
+                        var exp = m.Arguments[0];
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = ToCamelCase(memberExpression.Member.Name);
+                        var value = GetValue(exp).ToString();
+                        string v = " " + param + " = '" + value + "'";
+                        if (int.TryParse(value, out resultInt) || long.TryParse(value, out resultLong) || double.TryParse(value, out resultDouble) || float.TryParse(value, out resultFloat) || decimal.TryParse(value, out resultdecimal))
+                        {
+                            v = " " + param + " = " + value.ToString();
+                        }
+                        sb.Append(v);
+                    }
+                    else
+                    {
+                        var exp = (ConstantExpression)m.Arguments[0];
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = ToCamelCase(memberExpression.Member.Name);
+                        var value = GetValue(exp).ToString();
+                        string v = " " + param + " = '" + value + "'";
+                        if (int.TryParse(value, out resultInt) || long.TryParse(value, out resultLong) || double.TryParse(value, out resultDouble) || float.TryParse(value, out resultFloat) || decimal.TryParse(value, out resultdecimal))
+                        {
+                            v = " " + param + " = " + value.ToString();
+                        }
                         sb.Append(v);
                     }
 

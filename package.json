@@ -1,0 +1,19 @@
+{
+  "name": "RevStackCore.OrientDb",
+  "version": "1.0.1",
+  "description": "OrientDb implementation of the RevStackCore repository pattern",
+  "main": "RevStackCore.OrientDb.sln",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RevStackCore/OrientDb.git"
+  },
+  "author": "David Sheets",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RevStackCore/OrientDb/issues"
+  },
+  "homepage": "https://github.com/RevStackCore/OrientDb"
+}

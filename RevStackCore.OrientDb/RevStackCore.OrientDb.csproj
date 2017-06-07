@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>RevStackCore .net core OrientDb repository pattern.</Description>
+    <Copyright>Copyright 2017</Copyright>
+    <AssemblyTitle>RevStackCore.OrientDb</AssemblyTitle>
+    <Authors>David Sheets</Authors>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>RevStackCore.OrientDb</AssemblyName>
+    <PackageId>RevStackCore.OrientDb</PackageId>
+    <PackageTags>RevStackCore;.net core;OrientDb;RevStack;Repository Pattern</PackageTags>
+    <PackageProjectUrl>https://github.com/RevStackCore/OrientDb.git</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/RevStackCore/OrientDb/blob/master/LICENSE</PackageLicenseUrl>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.2-beta1" />
+    <PackageReference Include="RevStackCore.Pattern" Version="1.0.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.3.0" />
+    <PackageReference Include="System.Linq.Queryable" Version="4.0.1" />
+    <PackageReference Include="System.Net.Requests" Version="4.0.11" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.1.0" />
+  </ItemGroup>
+
+  <Target Name="PostcompileScript" AfterTargets="Build">
+    <Exec Command="dotnet pack --no-build --configuration $(Configuration)" />
+  </Target>
+
+</Project>

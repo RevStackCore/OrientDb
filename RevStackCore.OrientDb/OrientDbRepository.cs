@@ -24,6 +24,11 @@ namespace RevStackCore.OrientDb
             return query.ToList().AsEnumerable<TEntity>();
         }
 
+        public TEntity GetById(TKey id)
+        {
+            return Find(x => x.Id.Equals(id)).FirstOrDefault();
+        }
+
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
             return new Query.Query<TEntity>(_queryProvider).Where(predicate);
