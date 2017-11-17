@@ -362,7 +362,10 @@ namespace RevStackCore.OrientDb.Client
             entity["@rid"] = entityJson["@rid"];
             entity["@version"] = int.Parse(entityJson["@version"].ToString());
             entity["@modified"] = System.DateTime.UtcNow.ToString("o");
-            
+            //handle graph scenarios
+            entity.Remove("in");
+            entity.Remove("out");
+
             //allowPartial schema - merge properties by default
             List<JProperty> current_props = entityJson.Properties().ToList();
             List<JProperty> updated_props = entity.Properties().ToList();
@@ -370,12 +373,14 @@ namespace RevStackCore.OrientDb.Client
             {
                 if (!updated_props.Any(a => a.Name == prop.Name))
                 {
-                    if (prop.Name != "@rid" && prop.Name != "@fieldTypes")
+                    if (prop.Name != "@rid" &&
+                        prop.Name != "@fieldTypes")
                     {
                         entity.Add(prop);
                     }
-                }
+                } 
             }
+
             //traverse embedded documents, create and replace with rid
             foreach (JToken child in entity.Children().ToList())
                 this.RecurseForDocumentUpdate(child);
@@ -412,9 +417,12 @@ namespace RevStackCore.OrientDb.Client
                 }
             }
 
-            JToken childClass = child.SelectToken("@class", false);
+            var childClass = child.SelectToken("@class", false);
             if (childClass == null)
+            {
                 return;
+            }
+                
 
             JToken c = child.SelectToken("@rid", false);
 
