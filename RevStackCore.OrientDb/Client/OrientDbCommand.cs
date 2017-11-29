@@ -51,6 +51,7 @@ namespace RevStackCore.OrientDb.Client
             
             string name = entity.GetType().Name;
 
+            // orientdb meta for insert 
             if (jEntity.Contains("_rid"))
             {
                 jEntity = jEntity.Replace("_rid", "@rid");
@@ -69,8 +70,7 @@ namespace RevStackCore.OrientDb.Client
             }
 
             name = json["@class"].ToString();
-            //json["@rid"] = "#-1:-1";
-
+            
             InsertInternal(json);
             
             return this.Find<TEntity>("select from " + name + " where " + query, -1, "*:-1").SingleOrDefault();
@@ -88,6 +88,7 @@ namespace RevStackCore.OrientDb.Client
 
             string name = entity.GetType().Name;
 
+            // orientdb meta for update 
             if (jEntity.Contains("_rid"))
             {
                 jEntity = jEntity.Replace("_rid", "@rid");
@@ -154,9 +155,11 @@ namespace RevStackCore.OrientDb.Client
                 return "";
 
             string jEntities = CamelCaseJsonSerializer.SerializeObject(entities);
+            
+            //orientdb meta
             jEntities = jEntities.Replace("_class", "@class");
             jEntities = jEntities.Replace("_rid", "@rid");
-
+            
             JArray json = JArray.Parse(jEntities);
             foreach (JObject entity in json)
             {
@@ -204,7 +207,15 @@ namespace RevStackCore.OrientDb.Client
             }
             
             string body = response.Body;
-            //body = body.Replace("@rid", "_rid");
+            
+            //orientdb meta
+            body = body.Replace("@rid", "_rid");
+            body = body.Replace("@class", "_class");
+            body = body.Replace("@version", "_version");
+            //body = body.Replace("@type", "_type");
+            //body = body.Replace("@created", "_created");
+            //body = body.Replace("@modified", "_modified");
+
             var jRoot = JObject.Parse(body);
             var jResults = jRoot.Value<JArray>("result");
 
@@ -226,13 +237,13 @@ namespace RevStackCore.OrientDb.Client
 
             cid = response.Body;
 
+            //DEPRICATED
             //create property
-            url = string.Format("{0}/property/{1}/{2}/{3}", Connection.Server, Connection.Database, className, "name");
-            response = Task.Run(() => HttpClient.SendRequest(url, "POST", string.Empty, Connection.Username, Connection.Password, Connection.SessionId)).Result;
-
+            //url = string.Format("{0}/property/{1}/{2}/{3}", Connection.Server, Connection.Database, className, "name");
+            //response = Task.Run(() => HttpClient.SendRequest(url, "POST", string.Empty, Connection.Username, Connection.Password, Connection.SessionId)).Result;
             //create property
-            url = string.Format("{0}/property/{1}/{2}/{3}", Connection.Server, Connection.Database, className, "policies");
-            response = Task.Run(() => HttpClient.SendRequest(url, "POST", string.Empty, Connection.Username, Connection.Password, Connection.SessionId)).Result;
+            //url = string.Format("{0}/property/{1}/{2}/{3}", Connection.Server, Connection.Database, className, "policies");
+            //response = Task.Run(() => HttpClient.SendRequest(url, "POST", string.Empty, Connection.Username, Connection.Password, Connection.SessionId)).Result;
 
             //create index
             this.Execute("CREATE PROPERTY " + className + ".id " + typeName);
@@ -246,12 +257,22 @@ namespace RevStackCore.OrientDb.Client
             string typeName = OrientDbUtils.GetEntityIdJToken(entity["id"]);
             string name = entity["@class"].ToString();
             entity["id"] = entity["id"];
+
+            //orientdb meta
             entity["@class"] = name.Replace("\"", "");
             entity["@rid"] = "-1:-1";
-            entity["@type"] = "d";
             entity["@version"] = 0;
-            entity["@created"] = System.DateTime.UtcNow.ToString("o");
-            entity["@modified"] = System.DateTime.UtcNow.ToString("o");
+
+            //remove meta for insert
+            entity.Remove("_version");
+
+            //depricated
+            //entity["@type"] = "d";
+            //entity["@created"] = System.DateTime.UtcNow.ToString("O");
+            //entity["@modified"] = System.DateTime.UtcNow.ToString("O");
+            //remove meta for insert
+            //entity.Remove("_created");
+            //entity.Remove("_modified");
 
             foreach (JToken child in entity.Children().ToList())
                 this.RecurseForDocumentInsert(child);
@@ -359,13 +380,31 @@ namespace RevStackCore.OrientDb.Client
                 throw new Exception("Entity " + entity["@class"].ToString() + " does not exist.");
 
             JObject entityJson = (JObject)entityData[0];
-            entity["@rid"] = entityJson["@rid"];
-            entity["@version"] = int.Parse(entityJson["@version"].ToString());
-            entity["@modified"] = System.DateTime.UtcNow.ToString("o");
+
+            //orientdb meta
+            entity["@rid"] = entityJson["_rid"];
+            entity["@class"] = entityJson["_class"];
+            entity["@version"] = int.Parse(entityJson["_version"].ToString());
+
+            //remove meta for update
+            entity.Remove("_version");
+            entityJson.Remove("_version");
+            entityJson.Remove("_class");
+            entityJson.Remove("_rid");
+            entityJson.Remove("@type");
+
             //handle graph scenarios
             entity.Remove("in");
             entity.Remove("out");
 
+            //depricated
+            //entity["@type"] = entityJson["_type"];
+            //entity["@created"] = entityJson["_created"];
+            //entity["@modified"] = System.DateTime.UtcNow.ToString("O");
+            //remove meta for update
+            //entity.Remove("_created");
+            //entity.Remove("_modified");
+            
             //allowPartial schema - merge properties by default
             List<JProperty> current_props = entityJson.Properties().ToList();
             List<JProperty> updated_props = entity.Properties().ToList();
@@ -458,6 +497,7 @@ namespace RevStackCore.OrientDb.Client
                 };
             }
         }
+        
         #endregion
 
         public void Dispose()

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace RevStackCore.OrientDb.Client
 {
@@ -50,11 +51,24 @@ namespace RevStackCore.OrientDb.Client
             }
 
             string body = response.Body;
+
+            //orientdb meta
             body = body.Replace("@rid", "_rid");
+            body = body.Replace("@class", "_class");
+            body = body.Replace("@version", "_version");
+            
+            //DEPRICATED
+            //body = body.Replace("@type", "_type");
+            //body = body.Replace("@created", "_created");
+            //body = body.Replace("@modified", "_modified");
+
             var jRoot = JObject.Parse(body);
             var jResults = jRoot.Value<JArray>("result");
 
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
 
             object results = JsonConvert.DeserializeObject(jResults.ToString(), typeof(IEnumerable<>).MakeGenericType(elementType), settings);
             return results;

@@ -59,6 +59,5 @@ namespace RevStackCore.OrientDb.Query
         }
 
         public abstract object Execute(Expression expression);
-        //public abstract IQueryable<T> Execute<T>(Expression expression);
     }
 }
