@@ -8,6 +8,7 @@ build:
     parallel: true
     publish_nuget: true
     verbosity: minimal
+    project: RevStackCore.OrientDb.sln
 
 before_build:
   - dotnet restore
