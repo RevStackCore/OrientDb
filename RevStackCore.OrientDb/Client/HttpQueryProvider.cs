@@ -53,7 +53,7 @@ namespace RevStackCore.OrientDb.Client
             string body = response.Body;
 
             //orientdb meta
-            body = body.Replace("@rid", "_rid");
+            body = body.Replace("@rid", "rId");
             body = body.Replace("@class", "_class");
             body = body.Replace("@version", "_version");
             

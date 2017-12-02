@@ -52,9 +52,9 @@ namespace RevStackCore.OrientDb.Client
             string name = entity.GetType().Name;
 
             // orientdb meta for insert 
-            if (jEntity.Contains("_rid"))
+            if (jEntity.Contains("\"rId\""))
             {
-                jEntity = jEntity.Replace("_rid", "@rid");
+                jEntity = jEntity.Replace("\"rId\"", "\"@rid\"");
             }
 
             if (jEntity.Contains("_class"))
@@ -89,9 +89,9 @@ namespace RevStackCore.OrientDb.Client
             string name = entity.GetType().Name;
 
             // orientdb meta for update 
-            if (jEntity.Contains("_rid"))
+            if (jEntity.Contains("\"rId\""))
             {
-                jEntity = jEntity.Replace("_rid", "@rid");
+                jEntity = jEntity.Replace("\"rId\"", "\"@rid\"");
             }
 
             if (jEntity.Contains("_class"))
@@ -158,7 +158,7 @@ namespace RevStackCore.OrientDb.Client
             
             //orientdb meta
             jEntities = jEntities.Replace("_class", "@class");
-            jEntities = jEntities.Replace("_rid", "@rid");
+            jEntities = jEntities.Replace("\"rId\"", "\"@rid\"");
             
             JArray json = JArray.Parse(jEntities);
             foreach (JObject entity in json)
@@ -209,7 +209,7 @@ namespace RevStackCore.OrientDb.Client
             string body = response.Body;
             
             //orientdb meta
-            body = body.Replace("@rid", "_rid");
+            body = body.Replace("@rid", "rId");
             body = body.Replace("@class", "_class");
             body = body.Replace("@version", "_version");
             //body = body.Replace("@type", "_type");
@@ -382,7 +382,7 @@ namespace RevStackCore.OrientDb.Client
             JObject entityJson = (JObject)entityData[0];
 
             //orientdb meta
-            entity["@rid"] = entityJson["_rid"];
+            entity["@rid"] = entityJson["rId"];
             entity["@class"] = entityJson["_class"];
             entity["@version"] = int.Parse(entityJson["_version"].ToString());
 
@@ -390,7 +390,7 @@ namespace RevStackCore.OrientDb.Client
             entity.Remove("_version");
             entityJson.Remove("_version");
             entityJson.Remove("_class");
-            entityJson.Remove("_rid");
+            entityJson.Remove("rId");
             entityJson.Remove("@type");
 
             //handle graph scenarios

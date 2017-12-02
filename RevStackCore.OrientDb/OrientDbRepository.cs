@@ -18,33 +18,33 @@ namespace RevStackCore.OrientDb
             _queryProvider = new HttpQueryProvider(context.Connection);
         }
 
-        public IEnumerable<TEntity> Get()
+        public virtual IEnumerable<TEntity> Get()
         {
             IQueryable<TEntity> query = new Query.Query<TEntity>(_queryProvider);
             return query.ToList().AsEnumerable<TEntity>();
         }
 
-        public TEntity GetById(TKey id)
+        public virtual TEntity GetById(TKey id)
         {
             return Find(x => x.Id.Equals(id)).FirstOrDefault();
         }
 
-        public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        public virtual IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
             return new Query.Query<TEntity>(_queryProvider).Where(predicate);
         }
 
-        public TEntity Add(TEntity entity)
+        public virtual TEntity Add(TEntity entity)
         {
             return _database.Insert<TEntity>(entity);
         }
 
-        public TEntity Update(TEntity entity)
+        public virtual TEntity Update(TEntity entity)
         {
             return _database.Update<TEntity>(entity);
         }
 
-        public void Delete(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             _database.Delete<TEntity>(entity);
         }
