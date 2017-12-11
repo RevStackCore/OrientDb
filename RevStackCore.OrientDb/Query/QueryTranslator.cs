@@ -59,7 +59,9 @@ namespace RevStackCore.OrientDb.Query
                 m.Method.DeclaringType == typeof(System.Linq.Enumerable) ||
                 m.Method.Name == "Contains" ||
                 m.Method.Name == "Equals" ||
-                m.Method.Name == "StartsWith")
+                m.Method.Name == "StartsWith" ||
+                m.Method.Name == "ToLower" ||
+                m.Method.Name == "ToUpper")
             {
                 if (m.Method.Name == "Where")
                 {
@@ -140,6 +142,54 @@ namespace RevStackCore.OrientDb.Query
                         string param = ToCamelCase(memberExpression.Member.Name);
                         object value = GetValue(exp);
                         string v = " " + param + " LIKE \'" + value.ToString() + "%\'";
+                        sb.Append(v);
+                    }
+
+                    return m;
+                }
+                else if (m.Method.Name == "ToLower")
+                {
+                    if (m.Arguments[0].NodeType == ExpressionType.MemberAccess)
+                    {
+                        MemberExpression exp = (MemberExpression)m.Arguments[0];
+                        object value = GetValue(exp);
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = ToCamelCase(memberExpression.Member.Name);
+                        //string param = exp.Member.Name;
+                        string v = " " + param + " = '" + value.ToString().ToLower() + "'";
+                        sb.Append(v);
+                    }
+                    else
+                    {
+                        var exp = (ConstantExpression)m.Arguments[0];
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = ToCamelCase(memberExpression.Member.Name);
+                        object value = GetValue(exp);
+                        string v = " " + param + " = '" + value.ToString().ToLower() + "'";
+                        sb.Append(v);
+                    }
+
+                    return m;
+                }
+                else if (m.Method.Name == "ToUpper")
+                {
+                    if (m.Arguments[0].NodeType == ExpressionType.MemberAccess)
+                    {
+                        MemberExpression exp = (MemberExpression)m.Arguments[0];
+                        object value = GetValue(exp);
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = ToCamelCase(memberExpression.Member.Name);
+                        //string param = exp.Member.Name;
+                        string v = " " + param + " = '" + value.ToString().ToUpper() + "'";
+                        sb.Append(v);
+                    }
+                    else
+                    {
+                        var exp = (ConstantExpression)m.Arguments[0];
+                        var memberExpression = (MemberExpression)m.Object;
+                        string param = ToCamelCase(memberExpression.Member.Name);
+                        object value = GetValue(exp);
+                        string v = " " + param + " = '" + value.ToString().ToUpper() + "'";
                         sb.Append(v);
                     }
 
