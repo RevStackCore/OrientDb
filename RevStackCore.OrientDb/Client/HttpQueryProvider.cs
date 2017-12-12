@@ -39,19 +39,14 @@ namespace RevStackCore.OrientDb.Client
             }
             var response = Task.Run(() => HttpClient.SendRequest(url, "GET", string.Empty, _connection.Username, _connection.Password, _connection.SessionId)).Result;
 
-            if (response.StatusCode != 200)
-            {
-                throw new RestException
-                {
-                    StatusCode = response.StatusCode,
-                    Body = response.Body,
-                    StatusMessage = response.StatusString,
-                    Url = url
-                };
-            }
-
             string body = response.Body;
 
+            if (response.StatusCode != 200)
+            {
+                //return empty array object
+                body = "{ \"result\": [] }";
+            }
+            
             //orientdb meta
             body = body.Replace("@rid", "rId");
             body = body.Replace("@class", "_class");

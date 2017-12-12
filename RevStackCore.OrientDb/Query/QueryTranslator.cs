@@ -61,7 +61,10 @@ namespace RevStackCore.OrientDb.Query
                 m.Method.Name == "Equals" ||
                 m.Method.Name == "StartsWith" ||
                 m.Method.Name == "ToLower" ||
-                m.Method.Name == "ToUpper")
+                m.Method.Name == "ToUpper" ||
+                m.Method.Name == "Count" || //test this
+                m.Method.Name == "Any" || //test this
+                m.Method.Name == "ToString")
             {
                 if (m.Method.Name == "Where")
                 {
@@ -147,50 +150,87 @@ namespace RevStackCore.OrientDb.Query
 
                     return m;
                 }
+                else if (m.Method.Name == "ToString")
+                {
+                    if (m.Arguments.Count() == 0)
+                    {
+                        var memberExpression = (MemberExpression)m.Object;
+                        if (memberExpression.Expression.NodeType == ExpressionType.Parameter)
+                        {
+                            string param = ToCamelCase(memberExpression.Member.Name);
+                            string v = " " + param;
+                            sb.Append(v);
+                        }
+                        else if (memberExpression != null && memberExpression.Expression.NodeType == ExpressionType.Constant || memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
+                        {
+                            object v = GetValue(m);
+
+                            if (v == null)
+                                v = "";
+                            
+                            if (v.GetType() == typeof(string))
+                            {
+                                v = "'" + v.ToString() + "'";
+                            }
+                            sb.Append(v);
+                        }
+                    }
+                    
+                    return m;
+                }
                 else if (m.Method.Name == "ToLower")
                 {
-                    if (m.Arguments[0].NodeType == ExpressionType.MemberAccess)
+                    
+                    if (m.Arguments.Count() == 0)
                     {
-                        MemberExpression exp = (MemberExpression)m.Arguments[0];
-                        object value = GetValue(exp);
                         var memberExpression = (MemberExpression)m.Object;
-                        string param = ToCamelCase(memberExpression.Member.Name);
-                        //string param = exp.Member.Name;
-                        string v = " " + param + " = '" + value.ToString().ToLower() + "'";
-                        sb.Append(v);
-                    }
-                    else
-                    {
-                        var exp = (ConstantExpression)m.Arguments[0];
-                        var memberExpression = (MemberExpression)m.Object;
-                        string param = ToCamelCase(memberExpression.Member.Name);
-                        object value = GetValue(exp);
-                        string v = " " + param + " = '" + value.ToString().ToLower() + "'";
-                        sb.Append(v);
+                        if (memberExpression.Expression.NodeType == ExpressionType.Parameter)
+                        {
+                            string param = ToCamelCase(memberExpression.Member.Name);
+                            string v = " " + param;
+                            sb.Append(v);
+                        }
+                        else if (memberExpression != null && memberExpression.Expression.NodeType == ExpressionType.Constant || memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
+                        {
+                            object v = GetValue(m);
+
+                            if (v == null)
+                                v = "";
+
+                            if (v.GetType() == typeof(string))
+                            {
+                                v = "'" + v.ToString().ToLower() + "'";
+                            }
+                            sb.Append(v);
+                        }
                     }
 
                     return m;
                 }
                 else if (m.Method.Name == "ToUpper")
                 {
-                    if (m.Arguments[0].NodeType == ExpressionType.MemberAccess)
+                    if (m.Arguments.Count() == 0)
                     {
-                        MemberExpression exp = (MemberExpression)m.Arguments[0];
-                        object value = GetValue(exp);
                         var memberExpression = (MemberExpression)m.Object;
-                        string param = ToCamelCase(memberExpression.Member.Name);
-                        //string param = exp.Member.Name;
-                        string v = " " + param + " = '" + value.ToString().ToUpper() + "'";
-                        sb.Append(v);
-                    }
-                    else
-                    {
-                        var exp = (ConstantExpression)m.Arguments[0];
-                        var memberExpression = (MemberExpression)m.Object;
-                        string param = ToCamelCase(memberExpression.Member.Name);
-                        object value = GetValue(exp);
-                        string v = " " + param + " = '" + value.ToString().ToUpper() + "'";
-                        sb.Append(v);
+                        if (memberExpression.Expression.NodeType == ExpressionType.Parameter)
+                        {
+                            string param = ToCamelCase(memberExpression.Member.Name);
+                            string v = " " + param;
+                            sb.Append(v);
+                        }
+                        else if (memberExpression != null && memberExpression.Expression.NodeType == ExpressionType.Constant || memberExpression.Expression.NodeType == ExpressionType.MemberAccess)
+                        {
+                            object v = GetValue(m);
+
+                            if (v == null)
+                                v = "";
+
+                            if (v.GetType() == typeof(string))
+                            {
+                                v = "'" + v.ToString().ToUpper() + "'";
+                            }
+                            sb.Append(v);
+                        }
                     }
 
                     return m;
@@ -274,6 +314,30 @@ namespace RevStackCore.OrientDb.Query
                     LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
                     ColumnProjection projection = new ColumnProjector().ProjectColumns(lambda.Body, this.row);
                     sb.Append("SELECT ");
+                    sb.Append(projection.Columns);
+                    sb.Append(" FROM (");
+                    this.Visit(m.Arguments[0]);
+                    sb.Append(") ");
+                    this.projection = projection;
+                    return m;
+                }
+                else if (m.Method.Name == "Any")
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
+                    ColumnProjection projection = new ColumnProjector().ProjectColumns(lambda.Body, this.row);
+                    sb.Append("SELECT ");
+                    sb.Append(projection.Columns);
+                    sb.Append(" FROM (");
+                    this.Visit(m.Arguments[0]);
+                    sb.Append(") ");
+                    this.projection = projection;
+                    return m;
+                }
+                else if (m.Method.Name == "Count")
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
+                    ColumnProjection projection = new ColumnProjector().ProjectColumns(lambda.Body, this.row);
+                    sb.Append("SELECT count(*)");
                     sb.Append(projection.Columns);
                     sb.Append(" FROM (");
                     this.Visit(m.Arguments[0]);

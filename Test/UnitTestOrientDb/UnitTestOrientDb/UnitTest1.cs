@@ -32,6 +32,9 @@ namespace UnitTestOrientDb
             person = personRepository.Add(person);
             // Get by id
             person = personRepository.GetById(person.Id);
+
+            
+
             // Update
             person.Age = 65;
             person = personRepository.Update(person);
@@ -42,10 +45,15 @@ namespace UnitTestOrientDb
         [TestMethod]
         public void Queryable()
         {
-            var query = personRepository.Find(x=>x.Age == 65);
-            var users = query.ToList();
-            Assert.AreNotEqual(0, users.Count);
+            var userName = "Jane";
+            var user = personRepository.Find(x => x.FirstName.ToString() == userName.ToLower()).ToSingleOrDefault();
+            Assert.AreNotEqual(null, user);
+            //var query = personRepository.Find(x=>x.Age == 65);
+            //var users = query.ToList();
+            //Assert.AreNotEqual(0, users.Count);
         }
 
     }
+
+
 }
