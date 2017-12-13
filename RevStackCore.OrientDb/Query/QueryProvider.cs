@@ -37,6 +37,11 @@ namespace RevStackCore.OrientDb.Query
 
         T IQueryProvider.Execute<T>(Expression expression)
         {
+            Type elementType = TypeSystem.GetElementType(expression.Type);
+            if (elementType == typeof(Int32) || elementType == typeof(bool))
+            {
+                return (T)this.Execute(expression);
+            }
             //Single or SingleOrDefault
             IEnumerable results = (IEnumerable)this.Execute(expression);
             IEnumerable<T> en = results.Cast<T>();

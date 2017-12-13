@@ -65,6 +65,15 @@ namespace RevStackCore.OrientDb.Client
                 TypeNameHandling = TypeNameHandling.All
             };
 
+            if (elementType == typeof(Int32))
+            {
+                return jResults.Count();
+            }
+            else if (elementType == typeof(bool))
+            {
+                return jResults.Any();
+            }
+
             object results = JsonConvert.DeserializeObject(jResults.ToString(), typeof(IEnumerable<>).MakeGenericType(elementType), settings);
             return results;
         }
