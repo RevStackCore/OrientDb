@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RevStackCore.OrientDb;
 using RevStackCore.Pattern;
+using RevStackCore.Extensions;
 using System.Linq;
 
 namespace UnitTestOrientDb
@@ -46,7 +47,9 @@ namespace UnitTestOrientDb
         public void Queryable()
         {
             var userName = "Jane";
-            var user = personRepository.Find(x => x.FirstName.ToString() == userName.ToLower()).ToSingleOrDefault();
+            var user = personRepository.Find(x => x.Compare(x.FirstName, userName)).ToSingleOrDefault();
+
+            //var user = personRepository.Find(x => x.FirstName == userName).ToSingleOrDefault();
             Assert.AreNotEqual(null, user);
             //var query = personRepository.Find(x=>x.Age == 65);
             //var users = query.ToList();

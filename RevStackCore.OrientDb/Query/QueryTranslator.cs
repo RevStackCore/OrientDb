@@ -58,7 +58,7 @@ namespace RevStackCore.OrientDb.Query
             if (m.Method.DeclaringType == typeof(Queryable) ||
                 m.Method.DeclaringType == typeof(System.Linq.Enumerable) ||
                 m.Method.Name == "Contains" ||
-                m.Method.Name == "Equals" ||
+                m.Method.Name == "Equals" || 
                 m.Method.Name == "StartsWith" ||
                 m.Method.Name == "ToLower" ||
                 m.Method.Name == "ToUpper" ||
@@ -66,6 +66,12 @@ namespace RevStackCore.OrientDb.Query
                 m.Method.Name == "Any" || //test this
                 m.Method.Name == "ToString")
             {
+                int resultInt;
+                long resultLong;
+                double resultDouble;
+                float resultFloat;
+                decimal resultdecimal;
+
                 if (m.Method.Name == "Where")
                 {
                     //sb.Append("SELECT * FROM (");
@@ -249,11 +255,7 @@ namespace RevStackCore.OrientDb.Query
                 }
                 else if (m.Method.Name == "Equals")
                 {
-                    int resultInt;
-                    long resultLong;
-                    double resultDouble;
-                    float resultFloat;
-                    decimal resultdecimal;
+                    
 
                     if (m.Arguments[0].NodeType == ExpressionType.MemberAccess)
                     {
@@ -333,32 +335,22 @@ namespace RevStackCore.OrientDb.Query
                     this.projection = projection;
                     return m;
                 }
-                //else if (m.Method.Name == "Any")
-                //{
-                //    LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[0]);
-                //    ColumnProjection projection = new ColumnProjector().ProjectColumns(lambda.Body, this.row);
-                //    sb.Append("SELECT ");
-                //    sb.Append(projection.Columns);
-                //    sb.Append(" FROM (");
-                //    this.Visit(m.Arguments[0]);
-                //    sb.Append(") ");
-                //    this.projection = projection;
-                //    return m;
-                //}
-                //else if (m.Method.Name == "Count")
-                //{
-                //    LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[0]);
-                //    ColumnProjection projection = new ColumnProjector().ProjectColumns(lambda.Body, this.row);
-                //    sb.Append("SELECT count(*)");
-                //    sb.Append(projection.Columns);
-                //    sb.Append(" FROM (");
-                //    this.Visit(m.Arguments[0]);
-                //    sb.Append(") ");
-                //    this.projection = projection;
-                //    return m;
-                //}
             }
-            throw new NotSupportedException(string.Format("The method '{0}' is not supported", m.Method.Name));
+
+
+            try
+            {
+                //handle custom extensions
+                this.Visit(m.Arguments[1]);
+                sb.Append(" = ");
+                this.Visit(m.Arguments[2]);
+                return m;
+            }
+            catch (Exception)
+            {
+                throw new NotSupportedException(string.Format("The method '{0}' is not supported", m.Method.Name));
+            }
+            
         }
 
 
