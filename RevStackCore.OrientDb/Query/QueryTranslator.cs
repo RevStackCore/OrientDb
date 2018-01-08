@@ -415,10 +415,10 @@ namespace RevStackCore.OrientDb.Query
                     sb.Append(" AND ");
                     break;
                 case ExpressionType.Or:
-                    sb.Append(" OR");
+                    sb.Append(" OR ");
                     break;
                 case ExpressionType.OrElse:
-                    sb.Append(" OR");
+                    sb.Append(" OR ");
                     break;
                 case ExpressionType.Equal:
                     sb.Append(" = ");

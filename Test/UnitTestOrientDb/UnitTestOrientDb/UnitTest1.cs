@@ -47,8 +47,8 @@ namespace UnitTestOrientDb
         public void Queryable()
         {
             var userName = "Jane";
-            var user = personRepository.Find(x => x.Compare(x.FirstName, userName)).ToSingleOrDefault();
-
+            var user = personRepository.Find(x => x.Compare(x.FirstName, userName));
+            int count = user.Count();
             //var user = personRepository.Find(x => x.FirstName == userName).ToSingleOrDefault();
             Assert.AreNotEqual(null, user);
             //var query = personRepository.Find(x=>x.Age == 65);
