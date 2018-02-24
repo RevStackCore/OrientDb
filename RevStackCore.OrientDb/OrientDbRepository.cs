@@ -36,6 +36,15 @@ namespace RevStackCore.OrientDb
 
         public virtual TEntity Add(TEntity entity)
         {
+            //handle vertex objects
+            if (entity.GetType() == typeof(IOrientVertexEntity<TKey>))
+            {
+                var name = entity.GetType().Name;
+                _database.Execute("CREATE CLASS " + name + " EXTENDS V");
+                _database.Execute("CREATE PROPERTY " + name + ".id STRING");
+                _database.Execute("CREATE INDEX " + name + ".id UNIQUE");
+            }
+
             return _database.Insert<TEntity>(entity);
         }
 
@@ -46,6 +55,14 @@ namespace RevStackCore.OrientDb
 
         public virtual void Delete(TEntity entity)
         {
+            //handle vertex objects
+            if (entity.GetType() == typeof(IOrientVertexEntity<TKey>))
+            {
+                var name = entity.GetType().Name;
+                _database.Execute("DELETE VERTEX " + name + " where id = '" + entity.Id.ToString() + "'");
+                return;
+            }
+               
             _database.Delete<TEntity>(entity);
         }
         

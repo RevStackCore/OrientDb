@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>RevStackCore .net core OrientDb repository pattern.</Description>
-    <Copyright>Copyright 2017</Copyright>
+    <Copyright>Copyright 2018</Copyright>
     <AssemblyTitle>RevStackCore.OrientDb</AssemblyTitle>
     <Authors>David Sheets</Authors>
     <TargetFramework>netstandard1.6</TargetFramework>
@@ -16,9 +16,9 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>1.1.2</Version>
-    <AssemblyVersion>1.1.2.0</AssemblyVersion>
-    <FileVersion>1.1.2.0</FileVersion>
+    <Version>1.1.3</Version>
+    <AssemblyVersion>1.1.3.0</AssemblyVersion>
+    <FileVersion>1.1.3.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

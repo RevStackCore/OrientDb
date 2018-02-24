@@ -40,6 +40,7 @@ namespace RevStackCore.OrientDb.Client
 
         public TEntity Insert<TEntity>(TEntity entity)
         {
+            
             Type type = entity.GetType();
             var info = type.GetProperty("Id");
             if (info == null)
