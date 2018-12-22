@@ -16,20 +16,30 @@ namespace RevStackCore.OrientDb.Client
             RestResponse rv = new RestResponse
             {
                 Headers = new Dictionary<string, string>(),
+                RequestHeaders = new Dictionary<string, string>(),
+                RequestContentLength = 0,
                 Body = string.Empty
             };
 
             HttpWebRequest request = null;
             HttpWebResponse response = null;
-            
+            var headers = "";
+
             try
             {
                 request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = method;
-                //request.KeepAlive = false;
 
-                var cred = new NetworkCredential(username, password);
-                request.Credentials = cred;
+                //var cred = new NetworkCredential(username, password);
+                //request.Credentials = cred;
+
+                string credentials = String.Format("{0}:{1}", username, password);
+                byte[] credBytes = Encoding.ASCII.GetBytes(credentials);
+                string base64 = Convert.ToBase64String(credBytes);
+                string authorization = String.Concat("Basic ", base64);
+
+                request.Headers["Authorization"] = authorization;
+                request.Headers["Accept-Encoding"] = "gzip,deflat";
                 request.ContentType = "application/json; charset=utf-8";
 
                 if (!string.IsNullOrEmpty(body))
@@ -40,6 +50,10 @@ namespace RevStackCore.OrientDb.Client
                         stream.Write(bytes, 0, bytes.Length);
                     }
                 }
+
+                //request headers
+                request.Headers.AllKeys.ToList().ForEach(x => rv.RequestHeaders.Add(x, request.Headers[x]));
+                rv.RequestContentLength = body.Length;
 
                 response = (HttpWebResponse) await request.GetResponseAsync();
                 rv.StatusCode = (int)((HttpWebResponse)response).StatusCode;

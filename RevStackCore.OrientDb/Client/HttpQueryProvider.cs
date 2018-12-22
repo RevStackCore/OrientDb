@@ -41,9 +41,19 @@ namespace RevStackCore.OrientDb.Client
 
             string body = response.Body;
 
+            if (response.StatusCode == 401) 
+            {
+                var headers = "";
+                foreach(var keyValue in response.RequestHeaders) 
+                {
+                    headers += keyValue.Key + ": " + keyValue.Value + ";";
+                }
+                throw new Exception("url=" + url + ";requestHeaders=" + headers + ";requestContentLength=" + response.RequestContentLength + ";contentType=" + response.ContentType + ";oSessionId=" + response.OSessionId + ";responseHeaders=" + response.Headers.ToString() + ";responseBody=" + response.Body);
+            }
+
             if (response.StatusCode != 200)
             {
-                //return empty array object
+                 //return empty array object
                 body = "{ \"result\": [] }";
             }
             

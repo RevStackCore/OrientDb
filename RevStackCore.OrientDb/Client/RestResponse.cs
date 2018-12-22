@@ -8,6 +8,8 @@ namespace RevStackCore.OrientDb.Client
     public class RestResponse
     {
         public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, string> RequestHeaders { get; set; }
+        public long RequestContentLength { get; set; }
         public int StatusCode { get; set; }
         public string StatusString { get; set; }
         public string Body { get; set; }
